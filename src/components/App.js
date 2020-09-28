@@ -2,7 +2,7 @@ import React from 'react';
 import { data } from '../data';
 import Navbar from './Navbar';
 import MovieCard from './MovieCard';
-import { addMovies } from '../actions';
+import { addMovies, setShowFavourite } from '../actions';
 
 class App extends React.Component {
   componentDidMount() {
@@ -27,20 +27,38 @@ class App extends React.Component {
     }
     return false;
   };
+  onChangeTab = (value) => {
+    this.props.store.dispatch(setShowFavourite(value));
+  };
   render() {
-    const { list } = this.props.store.getState(); // { list:[], favourites:[]}
+    const { list, favourites, showFavourites } = this.props.store.getState(); // { list:[], favourites:[]}
     console.log('STATE', this.props.store.getState());
     // console.log('RENDER');
+    const displayMovies = showFavourites ? favourites : list;
     return (
       <div className="App">
         <Navbar />
         <div className="main">
           <div className="tabs">
-            <div className="tab">Movies</div>
-            <div className="tab">Favourites</div>
+            <div
+              onClick={() => {
+                this.onChangeTab(false);
+              }}
+              className={`tab ${showFavourites ? '' : 'active-tabs'}`}
+            >
+              Movies
+            </div>
+            <div
+              onClick={() => {
+                this.onChangeTab(true);
+              }}
+              className={`tab ${showFavourites ? 'active-tabs' : null}`}
+            >
+              Favourites
+            </div>
           </div>
           <div className="list">
-            {list.map((movie, index) => {
+            {displayMovies.map((movie, index) => {
               return (
                 <MovieCard
                   movie={movie}
@@ -51,6 +69,9 @@ class App extends React.Component {
               );
             })}
           </div>
+          {displayMovies.length === 0 ? (
+            <div className="no-movies"> No movies to dislay!</div>
+          ) : null}
         </div>
       </div>
     );
