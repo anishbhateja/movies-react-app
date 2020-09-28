@@ -2,6 +2,7 @@ import React from 'react';
 import { data } from '../data';
 import Navbar from './Navbar';
 import MovieCard from './MovieCard';
+import { addMovies } from '../actions';
 
 class App extends React.Component {
   componentDidMount() {
@@ -11,13 +12,10 @@ class App extends React.Component {
     store.subscribe(() => {
       //event lister for changes made to the state
       console.log('UPDATED');
-      this.forceUpdate(); //will make the render function execute again
+      this.forceUpdate(); //will make the app component rerender
     });
-    store.dispatch({
-      //action being sent
-      type: 'ADD_MOVIES',
-      movies: data,
-    });
+    //takes in data and return the object which will be passed on to the reducer
+    store.dispatch(addMovies(data)); //ACTION CREATOR-will return object that will be passed on to the reducer
     console.log('STATE', this.props.store.getState());
   }
   render() {
